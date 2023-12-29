@@ -72,6 +72,15 @@ Avoir une carte bancaire pour faciliter les transactions.
 
 
 
+### * Exemples de mauvais choix :
+#### ** Exemple 1 :
+![11](https://github.com/yasminech17/chamkhiyasmine17/assets/154800060/074f0fa5-d276-41e7-a4dc-9b52bd7f1ce1)
+
+
+#### ** Exemple 2 :
+![12](https://github.com/yasminech17/chamkhiyasmine17/assets/154800060/99c67c7d-6a15-46ae-94f4-9ba8f9a650b7)
+
+
 
 
 
