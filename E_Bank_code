@@ -1,0 +1,604 @@
+#include <stdio.h>
+#include <string.h>
+#define Max 500
+#define TMM 4
+
+int choix;
+int Op;
+
+typedef struct Client {
+    int id_client;
+    char nom[30];
+    char prenom[30];
+    char adresse[30];
+    int telephone;
+}Client;
+
+typedef struct Date {
+    int Jour;
+    int Mois;
+    int Annee;
+}Date;
+
+typedef struct Transaction{
+    char type[20];
+    double amount;
+    struct Date d_transaction;
+}Transaction;
+
+typedef struct Compte{
+    int num_compte;
+    char type[20];
+    Client titulaire;
+    double solde;
+    struct Date d_compte;
+    Transaction trans[100];
+}Compte;
+
+typedef struct Carte_Bancaire{
+    int id_carte;
+    int num_compte;
+    int id_client;
+    char type;
+    char Etat;
+}Carte_Bancaire;
+
+typedef struct Bank
+{
+    Client clients[Max];
+    int nbClient;
+    Compte comptes[Max];
+    int nbCompte;
+}Bank;
+
+Carte_Bancaire C[Max];
+int k=1;
+
+
+void Menu_Principal() { //Affichage du menu principale
+    printf("1- Service client\n");
+    printf("2- Service compte\n");
+    printf("3- Gestion des opérations\n");
+    printf("4- Prendre un crédit\n");
+    printf("5- Carte Bancaire\n");
+    printf("6- Afficher la liste des clients\n");
+    printf("7- Quitter le programme\n");
+    printf("quelle opération voulez-vous choisir? ");
+    scanf("%d", &choix);
+    if (choix==1)  //Service Client
+    {
+        printf("1- Ajouter\n");
+        printf("2- Modifier\n");
+        printf("3- Supprimer\n");
+        printf("4- Afficher\n");
+        printf("5- retour\n");
+        printf("Choisissez une opération: ");
+        scanf("%d", &Op);
+        Service_client(Op);
+    }
+    else if (choix==2)  //Setvice Compte
+    {
+        printf("1- Ajouter\n");
+        printf("2- Supprimer\n");
+        printf("3- Afficher\n");
+        printf("4- Modifier\n");
+        printf("5- retour\n");
+        printf("Choisissez une opération: ");
+        scanf("%d", &Op);
+        Service_compte(Op);
+    }
+    else if (choix==3)  //Gérer les transactions bancaires
+    {
+        printf("1- Retrait\n");
+        printf("2- Versement d'argent\n");
+        printf("3- retour\n");
+        printf("Choisissez une opération: ");
+        scanf("%d", &Op);
+        Gestion_operation(Op);
+    }
+    else if (choix==4)   //Prendre un credit
+    {
+        Credit();
+    }
+    else if (choix==5)  //Avoir une carte bancaire
+    {
+        Carte_banc();
+    }
+    else if (choix==6)
+    {
+        Afficher_clients();
+    }
+    else if (choix==7)
+    {
+        return 0;
+    }
+    else
+    {
+        printf("Mauvais choix");
+        return 0;
+    }
+
+}
+
+void Service_client(int Op){
+    struct Bank B;
+    if (Op==1)  //Ajouter
+    {
+        struct Client C;
+        printf("\ndonner votre identifiant: ");
+        scanf("%d", &C.id_client);
+
+        printf("\ndonner votre nom: ");
+        scanf("%s", &C.nom);
+
+        printf("\ndonner votre prenom: ");
+        scanf("%s", &C.prenom);
+
+        printf("\ndonner votre adresse: ");
+        scanf("%s", &C.adresse);
+
+        printf("\ndonner votre num de telephone: ");
+        scanf("%d", &C.telephone);
+
+        B.clients[B.nbClient+1] = C;
+        B.nbClient += 1;
+
+        printf("\nclient ajouté avec succés");
+    }
+    else if (Op==2)  //Modifier
+    {
+        int i;
+        int x;
+        int id;
+        printf("donner votre identifiant: ");
+        scanf("%d",&id);
+        x=0;
+        for (i=0; i<B.nbClient;i++)
+        {
+            if (B.clients[i].id_client== id)
+                x=i;
+        }
+        if (x==0){
+            printf("\nErreur, client non trouvé!");
+        }
+        else {
+            printf("Quelles informations souhaitez-vous modifier pour le client ?\n");
+            printf("1. Nom\n");
+            printf("2. Prénom\n");
+            printf("3. Adresse\n");
+        printf("4. Numero de telephone\n");
+        printf("5. Quitter\n");
+
+        int choix;
+        printf("Entrez votre choix : ");
+        scanf("%d", &choix);
+
+        switch (choix) {
+                case 1:
+                    printf("\ndonner le nouveau nom : ");
+                    scanf("%s", &B.clients[x].nom);
+                    printf("\nmodification effectuée avec succés!");
+                    break;
+                case 2:
+                    printf("\ndonner le nouveau prenom : ");
+                    scanf("%s", &B.clients[x].prenom);
+                    printf("\nmodification effectuée avec succés!");
+                    break;
+                case 3:
+                    printf("\ndonner la nouvelle adresse: ");
+                    scanf("%s",&B.clients[x].adresse);
+                    printf("\nmodification effectuée avec succés!");
+                    break;
+                case 4:
+                    printf("\ndonner le nouveau numero de telephone: ");
+                    scanf("%d",&B.clients[x].telephone);
+                    printf("\nmodification effectuée avec succés!");
+                    break;
+                case 5:
+                    return 0;
+                default:
+                    printf("Mauvais Choix!\n");
+            }
+        }
+
+    }
+    else if (Op==3)  //Supprimer
+    {
+        int j;
+        int x;
+        int id;
+        printf("donner votre identifiant:");
+        scanf("%d",&id);
+
+        for (j=0;j<B.nbClient;j++)
+        {
+            if (B.clients[j].id_client==id)
+                x=j;
+        }
+        for (j=x;j<B.nbClient-1;j++)
+        {
+            B.clients[j]=B.clients[j+1];
+        }
+        printf("\nSuppression effectuée avec succés!");
+    }
+    else if (Op==4)  //Afficher
+    {
+        int j;
+        int x;
+        int id;
+        printf("donner votre identifiant:");
+        scanf("%d",&id);
+        x=0;
+        for (j=0;j<B.nbClient;j++)
+        {
+            if (B.clients[j].id_client==id)
+                x=j;
+        }
+        if (x==0)
+        {
+            printf("\nErreur, client non trouvé!");
+        }
+        else
+        {
+            printf("\nIdClient: %d",&B.clients[x].id_client);
+            printf("\nNom: %s",&B.clients[x].nom);
+            printf("\nPrenom: %s",&B.clients[x].prenom);
+            printf("\nAdresse: %s",&B.clients[x].adresse);
+            printf("\nNum telephone: %d",&B.clients[x].telephone);
+        }
+    }
+    else if (Op==5)  //Retour
+    {
+        return 0;
+    }
+    else
+    {
+        printf("mauvais choix");
+    }
+}
+
+
+void Service_compte(int Op){
+    struct Bank B;
+    if (Op==1){   //Ajouter
+        struct Compte Co;
+        printf("\ndonner numero de compte: ");
+        scanf("%d", &Co.num_compte);
+
+        printf("\nchoisissez le type de votre compte: ");
+        printf("\n* Compte Courant");
+        printf("\n* Compte Epargne\n");
+        scanf("%s", &Co.type);
+
+        printf("\ndonner votre solde actuel: ");
+        scanf("%s", &Co.solde);
+
+        printf("\ndonner le jour de creation: ");
+        scanf("%d", &Co.d_compte.Jour);
+        printf("\ndonner le mois de creation: ");
+        scanf("%d", &Co.d_compte.Mois);
+        printf("\ndonner l annee de creation: ");
+        scanf("%d", &Co.d_compte.Annee);
+
+        printf("\ndonner le type d operation que vous allez faire");
+        printf("\n* versement");
+        printf("\n* retrait\n");
+        scanf("%s",&Co.trans[1].type);
+        Co.trans[1].d_transaction = Co.d_compte;
+        printf("\n donner la somme d argent: ");
+        scanf("%d", &Co.trans[1].amount);
+
+        Service_client(1);
+        Co.titulaire = B.clients[B.nbClient];
+
+        B.comptes[B.nbCompte+1] = Co;
+        B.nbCompte += 1;
+
+        printf("\nCompte ajouté avec succés!");
+    }
+
+    else if (Op==2){  //Supprimer
+        int j;
+        int x;
+        int num;
+        printf("donner le numero de votre compte:");
+        scanf("%d",&num);
+
+        for (j=0;j<B.nbCompte;j++)
+        {
+            if (B.comptes[j].num_compte==num)
+                x=j;
+        }
+        for (j=x;j<B.nbCompte-1;j++)
+        {
+            B.comptes[j]=B.comptes[j+1];
+        }
+        printf("\nSuppression effectuée avec succés!");
+    }
+
+    else if (Op==3){ //Affichage des informations d'un compte existant
+        int j;
+        int x;
+        int num;
+        printf("donner le numero de votre compte:");
+        scanf("%d",&num);
+        x=0;
+        for (j=0;j<B.nbCompte;j++)
+        {
+            if (B.comptes[j].num_compte==num)
+                x=j;
+        }
+        if (x==0)
+        {
+            printf("\nErreur, compte non trouvé!");
+        }
+        else
+        {
+            printf("\nNumero de compte: %d",&B.comptes[x].num_compte);
+            printf("\nType: %s",&B.comptes[x].type);
+            Service_client(4);
+            printf("\nSolde actuel: %s",&B.comptes[x].solde);
+            printf("\nDate de creation: %d/%d/%d",&B.comptes[x].d_compte.Jour,&B.comptes[x].d_compte.Mois,&B.comptes[x].d_compte.Annee);
+            printf("\nVoulez vous afficher le bilan de votre compte? ");
+            printf("1-OUI");
+            printf("2-NON");
+            scanf("%d",&num);
+            int i;
+            if (num==1){
+                i=0;
+                while(i<Max){
+                    printf("%d-%d-%d  |  %s  |  %d  ",&B.comptes[x].trans[i].d_transaction.Jour,&B.comptes[x].trans[i].d_transaction.Mois,&B.comptes[x].trans[i].d_transaction.Annee,&B.comptes[x].trans[i].type,&B.comptes[x].trans[i].amount);
+                    i++;
+                }
+            }
+            else {
+                return 0;
+            }
+        }
+    }
+
+    else if (Op==4){  //Modifier
+        int j;
+        int x;
+        int num;
+        printf("donner le numero de votre compte:");
+        scanf("%d",&num);
+        x=0;
+        for (j=0;j<B.nbCompte;j++)
+        {
+            if (B.comptes[j].num_compte==num)
+                x=j;
+        }
+        if (x==0)
+        {
+            printf("\nErreur, compte non trouvé!");
+        }
+        else {
+            printf("Quelles informations souhaitez-vous modifier pour le compte ?\n");
+            printf("1. Type de compte\n");
+            printf("2. Titulaire\n");
+            printf("3. Solde\n");
+            printf("4. Quitter\n");
+
+            int choix;
+            printf("Entrez votre choix : ");
+            scanf("%d", &choix);
+
+            switch (choix) {
+                    case 1:
+                        printf("\ndonner le nouveau type de compte : ");
+                        scanf("%s", &B.comptes[x].type);
+                        printf("\nmodification effectuée avec succés!");
+                        break;
+                    case 2:
+                        Service_client(2);
+                        printf("\nmodification effectuée avec succés!");
+                        break;
+                    case 3:
+                        printf("\ndonner le nouvel solde: ");
+                        scanf("%s",&B.comptes[x].solde);
+                        printf("\nmodification effectuée avec succés!");
+                        break;
+                    case 4:
+                        return 0;
+                    default:
+                        printf("Mauvais Choix!\n");
+            }
+
+        }
+
+    }
+
+    else if (Op==5){
+        return 0;
+    }
+    else {
+        printf("Mauvais choix");
+    }
+}
+
+void Gestion_operation(int Op){ //Gérer les transactions d'un compte existant
+    struct Bank B;
+    if (Op==1){ //Retrait d'argent
+        double Retrait;
+        int num;
+        int j;
+        int x;
+        printf("\donner le numero de votre compte: ");
+        scanf("%d",&num);
+        printf("\nDonner la somme que vous voulez prendre: ");
+        scanf("%lf", &Retrait);
+
+        x=0;
+        for (j=0;j<B.nbCompte;j++)
+        {
+            if (B.comptes[j].num_compte==num)
+                x=j;
+        }
+        if (x==0)
+        {
+            printf("\nErreur, compte non trouvé!");
+        }
+        else if (B.comptes[x].solde<Retrait){
+            printf("\nDesole, Solde Insuffisant!");
+        }
+        else {
+            B.comptes[x].solde -= Retrait;
+            printf("\n Retrait d argent effectue avec succes");
+        }
+
+    }
+
+    else if (Op==2){ //versement d'argent
+        double Vers;
+        int num;
+        int j;
+        int x;
+        printf("\donner le numero de votre compte: ");
+        scanf("%d",&num);
+        printf("\nDonner la somme que vous voulez verser: ");
+        scanf("%lf", &Vers);
+
+        x=0;
+        for (j=0;j<B.nbCompte;j++)
+        {
+            if (B.comptes[j].num_compte==num)
+                x=j;
+        }
+        if (x==0)
+        {
+            printf("\nErreur, compte non trouvé!");
+        }
+        else {
+            B.comptes[x].solde += Vers;
+            printf("\n Versement d argent effectue avec succes");
+        }
+
+    }
+
+    else if (Op==3){
+        return 0;
+    }
+
+    else {
+        printf("\nMauvais Choix!\n");
+    }
+}
+
+
+void Credit(){  //Prendre un credit
+    double credit;
+    double apport;
+    int A;
+    double Montant;//montant à donner chaque mois
+    printf("\nDonner la somme du credit que vous voulez prendre: ");
+    scanf("%lf",&credit);
+    printf("\nDonner votre apport personnel mensuel: ");
+    scanf("%lf",&apport);
+    printf("\nDonner le nombre d annee pour rendre le credit: ");
+    scanf("%d",&A);
+    Montant = (credit*TMM)/(A*12);
+    if (Montant<=((apport*40)/100)){
+        printf("\nVous pouvez avoir ce credit!");
+        printf("\nVous devez apporter ces fichiers:");
+        printf("\nDemande de credit");
+        printf("\nJustification des revenus professionnel");
+        printf("\nSalariés:");
+        printf("\nBulletin de paie daté de 2 mois maximum");
+        printf("\nAttestation de revenu annuel recente(3 mois maximum)");
+        printf("\nNonSalariés:");
+        printf("\nDéclaration des revenus des personnes physiques");
+        printf("\nJustificatifs autres revenus(contrat loyers enregistrés, notes d'honoraires,...)");
+    }
+    else{
+        printf("Désolé, vos apport ne sont pas suffisants pour avoir ce credit!");
+    }
+}
+
+
+void Carte_banc(){  //avoir une carte bancaire
+    struct Carte_Bancaire Carte;
+    int i=1;
+
+    int choix;
+    printf("\n Choisissez une operation:");
+    printf("\n 1-Creer une carte bancaire.");
+    printf("\n 2-Bloquer une carte bancaire.");
+    printf("\n 3-retour");
+    printf("\nEntrez votre choix:");
+    scanf("%d",&choix);
+
+    if (choix==1){
+        printf("\n Choisissez le type de carte que vous voulez avoir: ");
+        printf("\n 1-Carte Platinum");
+        printf("\n 2-Carte Gold Nationale");
+        printf("\n 3-Carte Gold Internationale");
+        printf("\n 4-Carte Visa Nationale");
+        printf("\n 5-Carte Visa Interationale");
+        printf("\n 6-Carte Iddikhar");
+        printf("\n 7-Carte Voyage");
+        printf("\n 8-Carte Jeunesse");
+        printf("\nEntrez votre choix:");
+        scanf("%s",&Carte.type);
+
+        printf("\nDonner l identifiant du titulaire de cette carte: ");
+        scanf("%d", &Carte.id_client);
+
+        printf("\nDonner le numéro de compte: ");
+        scanf("%d", &Carte.num_compte);
+
+        printf("\nDonner l identifiant de la carte: ");
+        scanf("%d", &Carte.id_carte);
+
+        printf("\nCarte crée avec succés!");
+
+        C[i+1] = Carte;
+        i += 1;
+    }
+    else if (choix==2){
+        int j;
+        int x;
+        int id;
+        printf("donner le numero de votre carte:");
+        scanf("%d",&id);
+        x=0;
+        for (j=0;j<i;j++)
+        {
+            if (C[j].id_carte==id)
+                x=j;
+        }
+        if (x==0)
+        {
+            printf("\nErreur, carte non trouvé!");
+        }
+        else {
+            C[x].Etat = "Bloquée";
+            printf("\nCarte Bloquée avec succés!");
+        }
+
+    }
+    else if (choix==3){
+        return 0;
+    }
+    else {
+        printf("Mauvais Choix:");
+    }
+
+}
+
+Afficher_clients(){
+    struct Bank B;
+    int j;
+    printf("\nVoici la liste des clients: ");
+    for (j=0;j<B.nbClient;j++){
+        printf("\n %d | %s | %s | %s | %d .",&B.clients[j].id_client,&B.clients[j].nom,&B.clients[j].prenom,&B.clients[j].adresse,&B.clients[j].telephone);
+    }
+
+}
+
+int main()
+{
+
+    Menu_Principal();
+    return 0;
+}
