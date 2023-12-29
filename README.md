@@ -31,6 +31,8 @@ Avoir une carte bancaire pour faciliter les transactions.
 
 
 ## Trace d'exécution : 
+### * Ajouter un client : 
+![1](https://github.com/yasminech17/chamkhiyasmine17/assets/154800060/f48467c7-2548-4ff4-991c-1d9fb1088af4)
 
 
 
